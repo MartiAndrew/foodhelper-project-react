@@ -23,6 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken'
+    'djoser'
     'drf_yasg',
 ] + PROJECT_APPS
 
@@ -65,7 +67,7 @@ DATABASES = {
         'USER': 'marti',
         'PASSWORD': 'Alfa82',
         'HOST': 'localhost',
-        'PORT': '5432',  # Порт PostgreSQL по умолчанию
+        'PORT': '5432',
     }
 }
 
@@ -105,14 +107,26 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+DJOSER = {
+    'HIDE_USERS': False,
+    'LOGIN_FIELD': 'email',
+    'SERIALIZERS': {
+        'user': 'api.v1.users.serializers.CustomUserSerializer',
+        'user_create': 'api.v1.users.serializers.CustomUserCreateSerializer',
+    }
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.AllowAny',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 6,
 }
 
 SWAGGER_SETTINGS = {
