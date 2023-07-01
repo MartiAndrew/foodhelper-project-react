@@ -8,7 +8,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 PROJECT_APPS = [
     'api',
     'users',
@@ -16,17 +15,17 @@ PROJECT_APPS = [
 ]
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken'
-    'djoser'
-    'drf_yasg',
-] + PROJECT_APPS
+                     'django.contrib.admin',
+                     'django.contrib.auth',
+                     'django.contrib.contenttypes',
+                     'django.contrib.sessions',
+                     'django.contrib.messages',
+                     'django.contrib.staticfiles',
+                     'rest_framework',
+                     'rest_framework.authtoken',
+                     'djoser',
+                     'drf_yasg',
+                 ] + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,7 +57,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'foodhelper.wsgi.application'
-
 
 DATABASES = {
     'default': {
@@ -101,7 +99,6 @@ AUTH_USER_MODEL = 'users.CustomUser'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
@@ -111,7 +108,6 @@ DJOSER = {
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        'user': 'api.v1.users.serializers.CustomUserSerializer',
         'user_create': 'api.v1.users.serializers.CustomUserCreateSerializer',
     }
 }
@@ -129,7 +125,15 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
 }
 
-SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': True,
-    'PERSIST_AUTH': True,
-}
+if DEBUG:
+    SWAGGER_SETTINGS = {
+        'SECURITY_DEFINITIONS': {
+            'Bearer': {
+                'type': 'apiKey',
+                'name': 'Authorization',
+                'in': 'header'
+            }
+        },
+        'LOGIN_URL': 'rest_framework:login',
+        'LOGOUT_URL': 'rest_framework:logout',
+    }

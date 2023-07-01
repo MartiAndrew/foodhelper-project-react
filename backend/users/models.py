@@ -32,6 +32,29 @@ class CustomUser(AbstractUser):
         return self.username
 
 
+class Subscribe(models.Model):
+    """
+    Класс описывающий модель подписки пользователя
+    на автора рецепта
+    """
+    user = models.ForeignKey(
+        CustomUser,
+        verbose_name='Пользователя',
+        related_name='follower',
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        CustomUser,
+        verbose_name='Автор',
+        related_name='following',
+        on_delete=models.CASCADE,
+    )
 
-
-
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'author',),
+                name='unique_subscribe'),
+        )
