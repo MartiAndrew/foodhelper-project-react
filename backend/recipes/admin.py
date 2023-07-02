@@ -24,17 +24,16 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name',)
-
-    emptinlines = (AmountRecipeInline,)
-    y_value_display = EMPTY_MESSAGE
+    inlines = (AmountRecipeInline,)
+    empty_value_display = EMPTY_MESSAGE
 
 
 class RecipeAdmin(admin.ModelAdmin):
     "Представляет модель Recipe в интерфейсе пользователя."
     list_display = ('id', 'name', 'author')
     search_fields = ('author', 'name', 'tags')
-    list_filter = ('author', 'name', 'tag')
-    filter_horizontal = ('tag',)
+    list_filter = ('author', 'name', 'tags')
+    filter_horizontal = ('tags',)
     inlines = (AmountRecipeInline,)
     empty_value_display = EMPTY_MESSAGE
 
