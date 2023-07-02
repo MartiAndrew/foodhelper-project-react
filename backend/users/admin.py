@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import CustomUser, Subscribe
 
+EMPTY_MESSAGE = '-пусто-'
 
 class UserAdmin(admin.ModelAdmin):
     """
@@ -9,7 +10,7 @@ class UserAdmin(admin.ModelAdmin):
     """
     list_display = ("id", "username", "email", "first_name", "last_name", "password")
     list_filter = ("username", "email")
-    empty_value_display = '-пусто-'
+    empty_value_display = EMPTY_MESSAGE
 
 
 class SubscribeAdmin(admin.ModelAdmin):
@@ -17,7 +18,7 @@ class SubscribeAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'author')
     search_fields = ('user',)
     list_filter = ('user',)
-    empty_value_display = '-пусто-'
+    empty_value_display = EMPTY_MESSAGE
 
 
 admin.site.register(CustomUser, UserAdmin)

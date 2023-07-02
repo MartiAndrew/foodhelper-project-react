@@ -134,6 +134,6 @@ if DEBUG:
                 'in': 'header'
             }
         },
-        'LOGIN_URL': 'rest_framework:login',
-        'LOGOUT_URL': 'rest_framework:logout',
+        'LOGIN_URL': 'rest_framework.urls:login',
+        'LOGOUT_URL': 'rest_framework.urls:logout',
     }

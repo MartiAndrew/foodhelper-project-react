@@ -110,8 +110,8 @@ class AmountRecipe(models.Model):
         default=1,
         validators=(
             MinValueValidator(
-                1, message='Мин. количество ингридиентов 1'),),
-        verbose_name='количество ингредиентов'
+                1, message='Мин. количество ингридиента 1'),),
+        verbose_name='количество ингредиента'
 
     )
     recipe = models.ForeignKey(
