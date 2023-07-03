@@ -8,9 +8,6 @@ class CustomUser(AbstractUser):
         max_length=150,
         unique=True,
         verbose_name='Уникальный никнэйм',
-        error_messages={
-            'unique': "Пользователь с таким никнеймом уже существует.",
-        }
     )
     email = models.EmailField(
         max_length=254, unique=True, verbose_name='Почта')
@@ -48,6 +45,11 @@ class Subscribe(models.Model):
         verbose_name='Автор',
         related_name='following',
         on_delete=models.CASCADE,
+    )
+    date_added = models.DateTimeField(
+        verbose_name="Дата создания подписки",
+        auto_now_add=True,
+        editable=False,
     )
 
     class Meta:

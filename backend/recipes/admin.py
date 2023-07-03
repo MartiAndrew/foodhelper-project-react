@@ -9,7 +9,7 @@ EMPTY_MESSAGE = '-пусто-'
 class TagAdmin(admin.ModelAdmin):
     """Представляет модель Tag в интерфейсе администратора."""
     list_display = ('id', 'name', 'color', 'slug')
-    search_fields = ('name',)
+    search_fields = ('name', 'slug')
     list_filter = ('name',)
     empty_value_display = EMPTY_MESSAGE
 
@@ -30,18 +30,28 @@ class IngredientAdmin(admin.ModelAdmin):
 
 class RecipeAdmin(admin.ModelAdmin):
     "Представляет модель Recipe в интерфейсе пользователя."
-    list_display = ('id', 'name', 'author')
+    list_display = ('id', 'name', 'author','cooking_time', 'favorite_count', 'list_ingredients' )
     search_fields = ('author', 'name', 'tags')
     list_filter = ('author', 'name', 'tags')
     filter_horizontal = ('tags',)
     inlines = (AmountRecipeInline,)
     empty_value_display = EMPTY_MESSAGE
 
-    def get_favorite_count(self, obj):
-        return obj.favorite_recipe.count()
+    def favorite_count(self, obj):
+        if obj.favorite_recipe.exists():
+            return obj.favorite_recipe.count()
+        return 0
 
-    get_favorite_count.short_description = 'Количество избранных рецептов'
-    readonly_fields = ('get_favorite_count',)
+    favorite_count.short_description = 'Избранное'
+
+    def list_ingredients(self, obj):
+        if obj.ingredients.exists():
+            return ', '.join(
+                [str(ingredient) for ingredient in obj.ingredients.all()]
+            )
+        return 0
+
+    list_ingredients.short_description = 'Ингредиенты'
 
 
 class FavoritesAdmin(admin.ModelAdmin):

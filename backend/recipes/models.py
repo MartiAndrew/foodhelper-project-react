@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 User = get_user_model()
@@ -14,9 +14,15 @@ class Tag(models.Model):
     )
     color = models.CharField(
         max_length=7,
-        verbose_name='Цвет тэга',
+        verbose_name='Цветовой HEX-код',
+        default='#FF0000',
         unique=True,
-        db_index=False,
+        validators=[
+            RegexValidator(
+                regex=r'^#[A-Fa-f0-9]{6}$',
+                message='Цвет должен быть в формате HEX-кода (#RRGGBB).'
+            )
+        ]
     )
     slug = models.SlugField(
         max_length=200,
