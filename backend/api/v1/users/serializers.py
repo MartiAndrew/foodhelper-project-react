@@ -1,8 +1,9 @@
-from djoser.serializers import UserCreateSerializer, UserSerializer
 import django.contrib.auth.password_validation as validators
 from email_validator import validate_email, EmailNotValidError
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
+
+from djoser.serializers import UserCreateSerializer, UserSerializer
 
 from users.models import CustomUser
 from ..recipe.serializers import SubscriptionsRecipeSerializer
@@ -40,13 +41,13 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class CustomUserSerializer(UserSerializer):
-    """Сериализатор для использования с моделью СustomUser."""
+    """Cериализатор просмотра профиля пользователя"""
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'id', 'username', 'first_name',
-                  'last_name', 'is_subscribed',)
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed',)
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
@@ -57,7 +58,7 @@ class CustomUserSerializer(UserSerializer):
 
 class SubscribeSerializer(serializers.ModelSerializer):
     """Сериализатор вывода авторов, на которых подписан текущий пользователь."""
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.BooleanField(read_only=True, default=True)
     recipes = SubscriptionsRecipeSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
 
@@ -65,9 +66,6 @@ class SubscribeSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
                   'is_subscribed', 'recipes', 'recipes_count',)
-
-    def get_is_subscribed(self, obj):
-        return True
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()

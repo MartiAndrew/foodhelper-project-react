@@ -16,7 +16,6 @@ class CustomUserViewSet(UserViewSet):
     @action(
         detail=True,
         methods=['POST', 'DELETE'],
-        url_path='subscribe',
 
     )
     def subscribe(self, request, **kwargs):
