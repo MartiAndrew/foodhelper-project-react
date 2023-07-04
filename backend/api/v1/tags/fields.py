@@ -1,5 +1,6 @@
-import webcolors
 from rest_framework import serializers
+
+import webcolors
 
 
 class Hex2NameColor(serializers.Field):
@@ -7,7 +8,6 @@ class Hex2NameColor(serializers.Field):
     Добавление цвета при создании тега
     #ffff00 - желтый
     #00ff00 - зеленый
-    #ff0000 - красный
     """
 
     def to_representation(self, value):

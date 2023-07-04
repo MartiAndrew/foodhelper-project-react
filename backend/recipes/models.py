@@ -118,7 +118,6 @@ class AmountRecipe(models.Model):
             MinValueValidator(
                 1, message='Мин. количество ингридиента 1'),),
         verbose_name='количество ингредиента'
-
     )
     recipe = models.ForeignKey(
         Recipe,

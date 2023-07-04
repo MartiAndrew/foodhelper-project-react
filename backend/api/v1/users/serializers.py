@@ -1,12 +1,11 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from drf_extra_fields.fields import Base64ImageField
 import django.contrib.auth.password_validation as validators
 from email_validator import validate_email, EmailNotValidError
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from users.models import CustomUser
-from recipes.models import Recipe
+from ..recipe.serializers import SubscriptionsRecipeSerializer
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -54,16 +53,6 @@ class CustomUserSerializer(UserSerializer):
         if user.is_anonymous:
             return False
         return user.following.filter(author=obj).exists()
-
-
-class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
-    """Базовый сериализатор для Recipe c укороченным набором полей."""
-    image = Base64ImageField()
-
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
-        read_only_fields = "__all__"
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
