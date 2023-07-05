@@ -80,7 +80,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
             )
         if user == author:
             raise serializers.ValidationError(
-                detail='Нельзя подписаться на самого себя',
+                detail='Подписка на самого себя невозможна',
                 code=status.HTTP_400_BAD_REQUEST,
             )
         return data

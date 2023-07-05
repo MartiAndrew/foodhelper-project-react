@@ -5,5 +5,6 @@ from recipes.models import Ingredient
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """Класс представления для ингредиента."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer

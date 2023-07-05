@@ -10,6 +10,7 @@ from .serializers import (CustomUserCreateSerializer,
 
 
 class CustomUserViewSet(UserViewSet):
+    """Класс представления для пользователя и его подписок."""
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserCreateSerializer
 
