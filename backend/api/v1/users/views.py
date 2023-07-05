@@ -19,25 +19,16 @@ class CustomUserViewSet(UserViewSet):
 
     )
     def subscribe(self, request, **kwargs):
-        user = get_object_or_404(CustomUser, id=kwargs.get('id'))
-        subscribe = Subscribe.objects.filter(user=request.user, author=user)
+        user = get_object_or_404(CustomUser, user=request.user)
+        author = get_object_or_404(CustomUser, id=self.kwargs.get('id'))
         if request.method == 'POST':
-            if user == request.user:
-                msg = {'error': 'Нельзя подписаться на самого себя.'}
-                return Response(msg, status=status.HTTP_400_BAD_REQUEST)
-            obj, created = Subscribe.objects.get_or_create(
-                user=request.user,
-                author=user
-            )
-            if not created:
-                msg = {'error': 'Вы уже подписаны на этого пользователя.'}
-                return Response(msg, status=status.HTTP_400_BAD_REQUEST)
-            serializer = SubscribeSerializer(obj, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if not subscribe.exists():
-            msg = {'error': 'Вы не подписаны на этого пользователя.'}
-            return Response(msg, status=status.HTTP_400_BAD_REQUEST)
-        subscribe.delete()
+            serializer = SubscribeSerializer(
+                author, data=request.data, context={'request': request}, )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        subscription = get_object_or_404(Subscribe, user=user, author=author)
+        subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(

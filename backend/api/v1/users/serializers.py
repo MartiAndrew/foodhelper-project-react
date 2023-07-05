@@ -1,11 +1,11 @@
 import django.contrib.auth.password_validation as validators
 from email_validator import validate_email, EmailNotValidError
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.serializers import ValidationError
 
 from djoser.serializers import UserCreateSerializer, UserSerializer
 
-from users.models import CustomUser
+from users.models import CustomUser, Subscribe
 from ..recipe.serializers import SubscriptionsRecipeSerializer
 
 
@@ -69,3 +69,18 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
+
+    def validate(self, data):
+        author = self.instance
+        user = self.context.get('request').user
+        if Subscribe.objects.filter(author=author, user=user).exists():
+            raise serializers.ValidationError(
+                detail='Подписка уже существует',
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if user == author:
+            raise serializers.ValidationError(
+                detail='Нельзя подписаться на самого себя',
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        return data
