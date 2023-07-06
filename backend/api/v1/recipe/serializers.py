@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from drf_extra_fields.fields import Base64ImageField
 
-from recipes.models import Recipe, AmountRecipe
+from recipes.models import Recipe, Ingredient, AmountRecipe, Tag
 from ..users.serializers import CustomUserSerializer
 from ..tags.serializers import TagSerializer
 
@@ -58,4 +58,45 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор описывающий поля для создания рецепта."""
-    pass
+    tags = serializers.PrimaryKeyRelatedField(many=True,
+                                              queryset=Tag.object.all(),
+                                              required=True)
+    ingredients = AmountRecipeSerializer(many=True)
+    image = Base64ImageField(required=True)
+
+    class Meta:
+        model = Recipe
+        fields = '__all__'
+        read_only_fields = ('author',)
+
+    def validate_ingredients(self, value):
+        if not all(ingredient['amount'] for ingredient in value):
+            raise serializers.ValidationError(
+                'Количество ингредиента не должно быть равно нулю'
+            )
+        return value
+
+    def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+
+        recipe, _ = Recipe.objects.get_or_create(**validated_data)
+        recipe.tags.set(tags)
+
+        AmountRecipe.objects.filter(recipe=recipe).delete()
+
+        for ingredient in ingredients:
+            ingredient_obj, _ = Ingredient.objects.get_or_create(
+                id=ingredient['ingredient']['id']
+            )
+            AmountRecipe.objects.create(
+                recipe=recipe,
+                ingredient=ingredient_obj,
+                amount=ingredient.get('amount')
+            )
+        return recipe
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        context = {'request': request}
+        return RecipeSerializer(instance, context=context).data
