@@ -4,9 +4,10 @@ from rest_framework import serializers, status
 from rest_framework.serializers import ValidationError
 
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from drf_extra_fields.fields import Base64ImageField
 
 from users.models import CustomUser, Subscribe
-from ..recipe.serializers import SubscriptionsRecipeSerializer
+from recipes.models import Recipe
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -54,6 +55,17 @@ class CustomUserSerializer(UserSerializer):
         if user.is_anonymous:
             return False
         return user.following.filter(author=obj).exists()
+
+
+class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
+    """Базовый сериализатор для Recipe c укороченным набором полей
+    для отображения в профиле пользователя."""
+    image = Base64ImageField()
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+        read_only_fields = "__all__"
 
 
 class SubscribeSerializer(serializers.ModelSerializer):

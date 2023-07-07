@@ -10,18 +10,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = IsAuthorOrReadOnly
+    http_method_names = ['get', 'post', 'patch', 'delete']
     ordering = ('-id',)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
     def get_serializer_class(self):
-        if self.request.method in ['POST', 'PUT', 'PATCH']:
+        if self.request.method in ['POST', 'PATCH']:
             return RecipeCreateSerializer
         return RecipeSerializer
-
-
-
-
-
-

@@ -7,17 +7,6 @@ from ..users.serializers import CustomUserSerializer
 from ..tags.serializers import TagSerializer
 
 
-class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
-    """Базовый сериализатор для Recipe c укороченным набором полей
-    для отображения в профиле пользователя."""
-    image = Base64ImageField()
-
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
-        read_only_fields = "__all__"
-
-
 class AmountRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для связанной модели AmountRecipe."""
     id = serializers.IntegerField(source='Ingredient.id')
@@ -59,7 +48,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор описывающий поля для создания рецепта."""
     tags = serializers.PrimaryKeyRelatedField(many=True,
-                                              queryset=Tag.object.all(),
+                                              queryset=Tag.objects.all(),
                                               required=True)
     ingredients = AmountRecipeSerializer(many=True)
     image = Base64ImageField(required=True)
