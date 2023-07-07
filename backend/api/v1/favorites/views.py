@@ -10,9 +10,12 @@ from .serializers import FavoriteSerializer
 
 
 class FavoriteView(APIView, FavoriteShoppingMixin):
-    permission_classes = [IsAuthenticated]
+    """Класс представления для избранных рецептов,
+    с наследованием от кастомного миксина."""
 
-    @action(detail=True, methods=['post', 'delete'])
+    @action(detail=True,
+            methods=['post', 'delete'],
+            permission_classes=[IsAuthenticated], )
     def favorite(self, request, **kwargs):
         user = get_object_or_404(CustomUser, username=request.user)
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))

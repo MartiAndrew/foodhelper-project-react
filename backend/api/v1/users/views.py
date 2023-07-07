@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from users.models import CustomUser, Subscribe
 
 from .serializers import (CustomUserCreateSerializer,
@@ -17,8 +18,7 @@ class CustomUserViewSet(UserViewSet):
     @action(
         detail=True,
         methods=['POST', 'DELETE'],
-
-    )
+        permission_classes=[IsAuthenticated], )
     def subscribe(self, request, **kwargs):
         user = get_object_or_404(CustomUser, user=request.user)
         author = get_object_or_404(CustomUser, id=self.kwargs.get('id'))
@@ -35,8 +35,7 @@ class CustomUserViewSet(UserViewSet):
     @action(
         detail=False,
         methods=['GET'],
-
-    )
+        permission_classes=[IsAuthenticated], )
     def subscriptions(self, request):
         subscribe = Subscribe.objects.filter(user=request.user)
         pages = self.paginate_queryset(subscribe)

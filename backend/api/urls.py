@@ -8,6 +8,7 @@ from .v1.recipe.views import RecipeViewSet
 
 app_name = "api"
 
+
 router_v1 = DefaultRouter()
 
 router_v1.register('users', CustomUserViewSet, basename='users')
