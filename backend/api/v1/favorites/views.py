@@ -15,7 +15,7 @@ class FavoriteView(APIView, FavoriteShoppingMixin):
 
     @action(detail=True,
             methods=['post', 'delete'],
-            permission_classes=[IsAuthenticated], )
+            permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
         user = get_object_or_404(CustomUser, username=request.user)
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))

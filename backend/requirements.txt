@@ -27,6 +27,7 @@ oauthlib==3.2.2
 packaging==23.1
 Pillow==9.5.0
 psycopg2==2.9.6
+psycopg2-binary==2.9.6
 pycparser==2.21
 PyJWT==2.7.0
 python3-openid==3.2.0
@@ -44,3 +45,4 @@ uritemplate==4.1.1
 urllib3==2.0.3
 validators==0.20.0
 webcolors==1.13
+python-dotenv

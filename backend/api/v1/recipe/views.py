@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from recipes.models import Recipe
-from users.permissions import IsAuthorOrReadOnly
+from api.v1.users.permissions import IsAdminOrAuthorOrReadOnly
 from .serializers import RecipeSerializer, RecipeCreateSerializer
 from api.v1.favorites.views import FavoriteView
 from api.v1.shopping_cart.views import ShoppingCartView
@@ -12,7 +12,7 @@ class RecipeViewSet(FavoriteView,
     """Класс представления для рецепта."""
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = IsAuthorOrReadOnly
+    permission_classes = (IsAdminOrAuthorOrReadOnly,)
     http_method_names = ['get', 'post', 'patch', 'delete']
     ordering = ('-id',)
 

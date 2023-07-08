@@ -19,7 +19,7 @@ class ShoppingCartView(APIView, FavoriteShoppingMixin):
 
     @action(detail=True,
             methods=['post', 'delete'],
-            permission_classes=[IsAuthenticated], )
+            permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, **kwargs):
         user = get_object_or_404(CustomUser, username=request.user)
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
@@ -32,7 +32,8 @@ class ShoppingCartView(APIView, FavoriteShoppingMixin):
 
     @action(detail=False,
             methods=['GET'],
-            permission_classes=[IsAuthenticated], )
+            permission_classes=(IsAuthenticated,)
+            )
     def download_shopping_cart(self, request):
         """Метод получения и выгрузки в PDF-file списка покупок."""
         if not request.user.shopping_cart.exists():
