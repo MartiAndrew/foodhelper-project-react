@@ -52,7 +52,7 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('id',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
@@ -75,16 +75,18 @@ class Recipe(models.Model):
     image = models.ImageField(
         verbose_name='Изображение',
         upload_to='recipes/images/',
+        blank=True,
     )
     text = models.TextField(
         verbose_name='Описание блюда')
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингредиенты',
-        through='recipes.AmountRecipe',
+        through='AmountRecipe',
     )
     tags = models.ManyToManyField(
         Tag,
+        related_name='recipes',
         verbose_name='Теги')
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -122,7 +124,7 @@ class AmountRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe')
+        related_name='recipeingredient')
     ingredient = models.ForeignKey(
         'Ingredient',
         on_delete=models.CASCADE,
@@ -136,11 +138,6 @@ class AmountRecipe(models.Model):
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
                 name='unique ingredient')]
-
-    def __str__(self):
-        return (
-            f'Рецепт: {self.recipe}, Ингредиент: {self.ingredient}, '
-            f'Количество: {self.amount}')
 
 
 class Favorites(models.Model):
@@ -172,7 +169,7 @@ class ShoppingCart(models.Model):
     """
     Класс описывающий модель корзины покупок рецептов пользователя.
     """
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='shopping_cart',
@@ -188,8 +185,12 @@ class ShoppingCart(models.Model):
         ordering = ['-id']
         verbose_name = 'Покупка'
         verbose_name_plural = 'Покупки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name="unique_recipe"
+            )
+        ]
 
     def __str__(self):
-        recipe_list = ", ".join([item.name for item in self.recipe.all()])
-        user_info = str(self.user) if self.user else "Пользователь не задан"
-        return f'Пользователь: {user_info}. Покупка: {recipe_list}.'
+        return f'{self.user}, {self.recipe.name}'

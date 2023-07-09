@@ -59,6 +59,10 @@ class Subscribe(models.Model):
             models.UniqueConstraint(
                 fields=('user', 'author',),
                 name='unique_subscribe'),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('author')),
+                name='prevent_self_subscribe',
+            )
         )
 
     def __str__(self):
