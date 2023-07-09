@@ -49,23 +49,22 @@ class CustomUserSerializer(UserSerializer):
         model = CustomUser
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
                   'is_subscribed',)
+        read_only_fields = ("is_subscribed",)
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
-        if user.is_anonymous:
+        if user.is_anonymous or (user == obj):
             return False
-        return user.following.filter(author=obj).exists()
+        return user.follower.filter(author=obj).exists()
 
 
 class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
     """Базовый сериализатор для Recipe c укороченным набором полей
     для отображения в профиле пользователя."""
-    image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
-        read_only_fields = "__all__"
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
