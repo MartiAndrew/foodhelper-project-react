@@ -30,6 +30,7 @@ psycopg2==2.9.6
 psycopg2-binary==2.9.6
 pycparser==2.21
 PyJWT==2.7.0
+python-dotenv==1.0.0
 python3-openid==3.2.0
 pytz==2023.3
 PyYAML==6.0
@@ -45,4 +46,4 @@ uritemplate==4.1.1
 urllib3==2.0.3
 validators==0.20.0
 webcolors==1.13
-python-dotenv
+gunicorn==20.1.0
