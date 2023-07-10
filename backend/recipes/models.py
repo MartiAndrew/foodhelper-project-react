@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 User = get_user_model()
 
@@ -164,6 +166,14 @@ class Favorites(models.Model):
     def __str__(self):
         return f'Пользователь: {self.user}, Рецепт: {self.recipe}'
 
+    @receiver(post_save, sender=User)
+    def create_favorites(
+            sender, instance, created, **kwargs):
+        """Метод-получатель сигнала который автоматически создаёт Избранное,
+         при создании нового пользователя."""
+        if created:
+            return Favorites.objects.create(user=instance)
+
 
 class ShoppingCart(models.Model):
     """
@@ -194,3 +204,11 @@ class ShoppingCart(models.Model):
 
     def __str__(self):
         return f'{self.user}, {self.recipe.name}'
+
+    @receiver(post_save, sender=User)
+    def create_shopping_cart(
+            sender, instance, created, **kwargs):
+        """Метод-получатель сигнала который автоматически создаёт корзину
+        покупок, при создании нового пользователя."""
+        if created:
+            return ShoppingCart.objects.create(user=instance)
