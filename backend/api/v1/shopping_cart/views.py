@@ -1,34 +1,34 @@
 from django.db.models import Sum
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.decorators import action
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from ..recipe.mixins import FavoriteShoppingMixin
-from users.models import CustomUser
-from recipes.models import Recipe, ShoppingCart, AmountRecipe
-from .serializers import ShoppingCartSerializer
+from recipes.models import AmountRecipe
 from .pdf_generate import pdf_generate
+from ..recipe.mixins import GetObjectMixin
 
 
-class ShoppingCartView(APIView, FavoriteShoppingMixin):
-    """Класс представления для корзины покупок"""
+class ShoppingCartCreateDel(GetObjectMixin,
+                            generics.RetrieveDestroyAPIView,
+                            generics.ListCreateAPIView):
+    """Класс представления для корзины покупок,
+    добавление и удаление рецепта из корзины."""
 
-    @action(detail=True,
-            methods=['post', 'delete'],
-            permission_classes=(IsAuthenticated,))
-    def shopping_cart(self, request, **kwargs):
-        user = get_object_or_404(CustomUser, username=request.user)
-        recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
+    def create(self, request, *args, **kwargs):
+        instance = self.get_object()
+        request.user.shopping_cart.recipe.add(instance)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == 'POST':
-            return self.perform_action(
-                user, recipe, ShoppingCartSerializer, ShoppingCart)
-        elif request.method == 'DELETE':
-            return self.delete_action(user, recipe, ShoppingCart)
+    def perform_destroy(self, instance):
+        self.request.user.shopping_cart.recipe.remove(instance)
+
+
+class ShoppingCartGetView(APIView):
+    """Класс представления для скачивания корзины покупок"""
 
     @action(detail=False,
             methods=['GET'],

@@ -1,27 +1,21 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics, status
+from rest_framework.response import Response
 
-from ..recipe.mixins import FavoriteShoppingMixin
-from users.models import CustomUser
-from recipes.models import Recipe, Favorites
-from .serializers import FavoriteSerializer
+from ..recipe.mixins import GetObjectMixin
 
 
-class FavoriteView(APIView, FavoriteShoppingMixin):
+
+class FavoriteCreateDel(GetObjectMixin,
+                        generics.RetrieveDestroyAPIView,
+                        generics.ListCreateAPIView):
     """Класс представления для избранных рецептов,
-    с наследованием от кастомного миксина."""
+    добавление и удаление"""
 
-    @action(detail=True,
-            methods=['post', 'delete'],
-            permission_classes=(IsAuthenticated,))
-    def favorite(self, request, **kwargs):
-        user = get_object_or_404(CustomUser, username=request.user)
-        recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
+    def create(self, request, *args, **kwargs):
+        instance = self.get_object()
+        request.user.favorite_recipe.recipe.add(instance)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == 'POST':
-            return self.perform_action(
-                user, recipe, FavoriteSerializer, Favorites)
-        elif request.method == 'DELETE':
-            return self.delete_action(user, recipe, Favorites)
+    def perform_destroy(self, instance):
+        self.request.user.favorite_recipe.recipe.remove(instance)

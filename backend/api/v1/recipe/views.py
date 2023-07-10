@@ -1,18 +1,21 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
 
 from recipes.models import Recipe
-from api.v1.users.permissions import IsAdminOrAuthorOrReadOnly
 from .serializers import RecipeSerializer, RecipeCreateSerializer
-from api.v1.favorites.views import FavoriteView
-from api.v1.shopping_cart.views import ShoppingCartView
+from ..shopping_cart.views import ShoppingCartGetView
+from ...filters import CustomRecipeFilter
 
-class RecipeViewSet(FavoriteView,
-                    ShoppingCartView,
+
+class RecipeViewSet(ShoppingCartGetView,
                     viewsets.ModelViewSet):
     """Класс представления для рецепта."""
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = (IsAdminOrAuthorOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = CustomRecipeFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
     ordering = ('-id',)
 
