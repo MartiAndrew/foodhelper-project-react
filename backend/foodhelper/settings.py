@@ -1,12 +1,17 @@
 import os
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-zws)*np+kc7e4h(rze##@z4ow4vl%0-(abh=ug7z9lb^*68z2a'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 PROJECT_APPS = [
     'api',
@@ -39,7 +44,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'foodhelper.urls'
 
-TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -65,7 +69,7 @@ DATABASES = {
         'USER': 'marti',
         'PASSWORD': 'Alfa82',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5432',  # Порт PostgreSQL по умолчанию
     }
 }
 
@@ -94,11 +98,15 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = '/backend_static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'backend_static')
+STATIC_URL = '/static_backend/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_backend')
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+STATICFILES_DIRS = [
+    '/media',
+]
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -106,8 +114,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
 
 DJOSER = {
-    'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
         'user': 'api.v1.users.serializers.CustomUserSerializer',
         'current_user': 'api.v1.users.serializers.CustomUserSerializer',
@@ -127,12 +138,13 @@ DJOSER = {
         'username_reset_confirm': ['rest_framework.permissions.IsAdminUser'],
         'set_username': ['rest_framework.permissions.IsAdminUser'],
         'user_delete': ['rest_framework.permissions.IsAdminUser'],
-    }
+    },
+    'HIDE_USERS': False,
 }
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
