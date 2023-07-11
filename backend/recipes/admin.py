@@ -30,7 +30,8 @@ class IngredientAdmin(admin.ModelAdmin):
 
 class RecipeAdmin(admin.ModelAdmin):
     "Представляет модель Recipe в интерфейсе пользователя."
-    list_display = ('id', 'name', 'author','cooking_time', 'favorite_count', 'list_ingredients' )
+    list_display = ('id', 'name', 'author', 'cooking_time',
+                    'favorite_count', 'list_ingredients')
     search_fields = ('author', 'name', 'tags')
     list_filter = ('author', 'name', 'tags')
     filter_horizontal = ('tags',)

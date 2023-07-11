@@ -39,7 +39,7 @@ class CustomUserViewSet(UserViewSet):
         return queryset
 
     def get_serializer_class(self):
-        if self.request.method.lower() == 'post':
+        if self.request.method == 'POST':
             return CustomUserCreateSerializer
         return CustomUserSerializer
 

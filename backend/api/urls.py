@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .v1.favorites.views import FavoriteCreateDel
 from .v1.shopping_cart.views import ShoppingCartCreateDel
-from .v1.users.views import CustomUserViewSet
+from .v1.users.views import CustomUserViewSet, SubscribeCreateDel
 from .v1.tags.views import TagViewSet
 from .v1.ingredient.views import IngredientViewSet
 from .v1.recipe.views import RecipeViewSet
@@ -17,6 +17,9 @@ router_v1.register('ingredients', IngredientViewSet, basename='ingredients')
 router_v1.register('recipes', RecipeViewSet, basename='recipes')
 
 urlpatterns = [
+    path('users/<int:user_id>/subscribe/',
+          SubscribeCreateDel.as_view(),
+          name='subscribe'),
     path('recipes/<int:recipe_id>/favorite/',
           FavoriteCreateDel.as_view(),
           name='favorite_recipe'),

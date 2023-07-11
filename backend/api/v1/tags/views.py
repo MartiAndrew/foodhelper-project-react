@@ -3,7 +3,6 @@ from rest_framework import filters, viewsets
 from .serializers import TagSerializer
 from recipes.models import Tag
 from ..users.permissions import IsAdminOrReadOnly
-from ...filters import TagsFilter
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -12,4 +11,5 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = None
-    filterset_class = TagsFilter
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
