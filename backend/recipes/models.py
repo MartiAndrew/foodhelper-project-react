@@ -18,7 +18,6 @@ class Tag(models.Model):
         max_length=7,
         verbose_name='Цветовой HEX-код',
         default='#FF0000',
-        unique=True,
         validators=[
             RegexValidator(
                 regex=r'^#[A-Fa-f0-9]{6}$',
@@ -30,11 +29,10 @@ class Tag(models.Model):
         max_length=200,
         verbose_name='Слаг тэга',
         unique=True,
-        db_index=False,
     )
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('id',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -59,7 +57,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return self.name
+        return f'{self.name}({self.measurement_unit})'
 
 
 class Recipe(models.Model):
@@ -72,28 +70,23 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         max_length=200,
-        verbose_name='Название'
+        verbose_name='Название рецепта'
     )
     image = models.ImageField(
         verbose_name='Изображение',
-        upload_to='recipes/images/',
-        blank=True,
+        upload_to='recipes/',
     )
     text = models.TextField(
         verbose_name='Описание блюда')
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингредиенты',
-        through='AmountRecipe',
+        through='RecipeIngredient',
     )
     tags = models.ManyToManyField(
         Tag,
         related_name='recipes',
         verbose_name='Теги')
-    pub_date = models.DateTimeField(
-        verbose_name='Дата публикации',
-        auto_now_add=True
-    )
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления',
         validators=(
@@ -103,7 +96,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        ordering = ('-pub_date',)
+        ordering = ('-id',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -111,7 +104,7 @@ class Recipe(models.Model):
         return self.name
 
 
-class AmountRecipe(models.Model):
+class RecipeIngredient(models.Model):
     """Класс описывающий промежуточную модель
     между моделями Ингридиента и Рецепта, в которой
     обозначается количество ингредиентов в рецепте.
@@ -126,7 +119,7 @@ class AmountRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe')
+        related_name='recipeingredients')
     ingredient = models.ForeignKey(
         'Ingredient',
         on_delete=models.CASCADE,
@@ -162,17 +155,16 @@ class Favorites(models.Model):
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
+        ordering = ['-id']
+        onstraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_favorite')]
 
     def __str__(self):
         return f'Пользователь: {self.user}, Рецепт: {self.recipe}'
 
-    @receiver(post_save, sender=User)
-    def create_favorites(
-            sender, instance, created, **kwargs):
-        """Метод-получатель сигнала который автоматически создаёт Избранное,
-         при создании нового пользователя."""
-        if created:
-            return Favorites.objects.create(user=instance)
+
 
 
 class ShoppingCart(models.Model):
@@ -183,7 +175,6 @@ class ShoppingCart(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='shopping_cart',
-        null=True,
         verbose_name='Пользователь')
     recipe = models.ForeignKey(
         Recipe,
@@ -205,10 +196,4 @@ class ShoppingCart(models.Model):
     def __str__(self):
         return f'{self.user}, {self.recipe.name}'
 
-    @receiver(post_save, sender=User)
-    def create_shopping_cart(
-            sender, instance, created, **kwargs):
-        """Метод-получатель сигнала который автоматически создаёт корзину
-        покупок, при создании нового пользователя."""
-        if created:
-            return ShoppingCart.objects.create(user=instance)
+

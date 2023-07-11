@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (Tag, AmountRecipe, Favorites,
+from .models import (Tag, RecipeIngredient, Favorites,
                      Ingredient, Recipe, ShoppingCart)
 
 EMPTY_MESSAGE = '-пусто-'
@@ -14,9 +14,9 @@ class TagAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_MESSAGE
 
 
-class AmountRecipeInline(admin.TabularInline):
+class RecipeIngredientInline(admin.TabularInline):
     """Представляет модель AmountRecipe в интерфейсе администратора."""
-    model = AmountRecipe
+    model = RecipeIngredient
 
 
 class IngredientAdmin(admin.ModelAdmin):
@@ -24,7 +24,7 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name',)
-    inlines = (AmountRecipeInline,)
+    inlines = (RecipeIngredientInline,)
     empty_value_display = EMPTY_MESSAGE
 
 
@@ -35,7 +35,7 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('author', 'name', 'tags')
     list_filter = ('author', 'name', 'tags')
     filter_horizontal = ('tags',)
-    inlines = (AmountRecipeInline,)
+    inlines = (RecipeIngredientInline,)
     empty_value_display = EMPTY_MESSAGE
 
     def favorite_count(self, obj):
