@@ -53,11 +53,12 @@ class CustomUserSerializer(UserSerializer):
         read_only_fields = ("is_subscribed",)
 
     def get_is_subscribed(self, obj):
-        request = self.context.get('request', )
-        if not request or request.user.is_anonymous:
-            return False
-        return Subscribe.author.filter(user=request.user,
-                                       author=obj).exists()
+        user = self.context.get('request').user
+        return (
+            user.follower.filter(author=obj).exists()
+            if user.is_authenticated
+            else False
+        )
 
 
 class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
@@ -72,12 +73,12 @@ class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
 class SubscribeSerializer(serializers.ModelSerializer):
     """Сериализатор вывода авторов, на которых подписан
     текущий пользователь."""
-    email = serializers.ReadOnlyField(source='user.email')
+    email = serializers.ReadOnlyField(source='author.email')
     id = serializers.ReadOnlyField(source='author.id')
     username = serializers.ReadOnlyField(source='author.username')
     first_name = serializers.ReadOnlyField(source='author.first_name')
     last_name = serializers.ReadOnlyField(source='author.last_name')
-    is_subscribed = serializers.SerializerMethodField('get_is_subscribed')
+    is_subscribed = serializers.BooleanField(read_only=True)
     recipes = serializers.SerializerMethodField('get_recipes')
     recipes_count = serializers.SerializerMethodField('get_recipes_count')
 
@@ -88,12 +89,6 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
-
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return user.following.filter(user=user, author=obj.id).exists()
 
     def get_recipes(self, obj):
         recipes = Recipe.objects.filter(author=obj.following)

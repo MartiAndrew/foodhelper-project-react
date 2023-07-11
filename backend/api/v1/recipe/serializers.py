@@ -22,6 +22,8 @@ class AmountRecipeSerializer(serializers.ModelSerializer):
 
 
 class IngredientsEditSerializer(serializers.ModelSerializer):
+    """Класс описывающий вспомогательный сериалайзер для
+    создания рецепта"""
     id = serializers.IntegerField()
     amount = serializers.IntegerField()
 
@@ -30,14 +32,13 @@ class IngredientsEditSerializer(serializers.ModelSerializer):
         fields = ('id', 'amount')
 
 
-
 class RecipeSerializer(serializers.ModelSerializer):
+    author = CustomUserSerializer(
+        read_only=True, )
     image = Base64ImageField()
     tags = TagSerializer(
         many=True,
         read_only=True)
-    author = CustomUserSerializer(
-        read_only=True, )
     ingredients = AmountRecipeSerializer(
         many=True,
         required=True,
@@ -56,7 +57,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор описывающий поля для создания рецепта."""
     image = Base64ImageField(
         max_length=None,
-        use_url=True,
         required=False)
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
