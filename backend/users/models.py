@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     """Модель пользователя"""
     username = models.CharField(
         max_length=150,
@@ -10,9 +10,12 @@ class CustomUser(AbstractUser):
         verbose_name='Уникальный никнэйм',
     )
     email = models.EmailField(
-        max_length=254, unique=True, verbose_name='Почта')
+        max_length=254,
+        unique=True,
+        verbose_name='Почта')
     first_name = models.CharField(
-        max_length=150, verbose_name='Имя'
+        max_length=150,
+        verbose_name='Имя'
     )
     last_name = models.CharField(max_length=150,
                                  verbose_name='Фамилия')
@@ -35,26 +38,23 @@ class Subscribe(models.Model):
     на автора рецепта
     """
     user = models.ForeignKey(
-        CustomUser,
-        verbose_name='Пользователя',
+        User,
+        verbose_name='Подписчик',
         related_name='follower',
         on_delete=models.CASCADE,
     )
     author = models.ForeignKey(
-        CustomUser,
+        User,
         verbose_name='Автор',
         related_name='following',
         on_delete=models.CASCADE,
-    )
-    date_added = models.DateTimeField(
-        verbose_name="Дата создания подписки",
-        auto_now_add=True,
-        editable=False,
     )
 
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
+        unique_together = ('user', 'author')
+
         constraints = (
             models.UniqueConstraint(
                 fields=('user', 'author',),
@@ -66,4 +66,4 @@ class Subscribe(models.Model):
         )
 
     def __str__(self):
-        return f'Пользователь {self.user} подписан на {self.author}'
+        return f'Подписчик {self.user} на {self.author}'

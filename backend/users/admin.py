@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from .models import CustomUser, Subscribe
+from .models import User, Subscribe
 
 EMPTY_MESSAGE = '-пусто-'
+
 
 class UserAdmin(admin.ModelAdmin):
     """
@@ -21,5 +22,5 @@ class SubscribeAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_MESSAGE
 
 
-admin.site.register(CustomUser, UserAdmin)
+admin.site.register(User, UserAdmin)
 admin.site.register(Subscribe, SubscribeAdmin)
