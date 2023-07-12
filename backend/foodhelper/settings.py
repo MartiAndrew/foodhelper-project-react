@@ -9,14 +9,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-zws)*np+kc7e4h(rze##@z4ow4vl%0-(abh=ug7z9lb^*68z2a'
 
-DEBUG = True
+DEBUG = int(os.getenv('DEBUG', default=True))
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default='localhost 127.0.0.1').split()
 
 PROJECT_APPS = [
-    'api',
-    'users',
-    'recipes',
+    'users.apps.UsersConfig',
+    'recipes.apps.RecipesConfig',
+    'api.apps.ApiConfig',
 ]
 
 INSTALLED_APPS = [
@@ -90,6 +90,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.User'
+
 LANGUAGE_CODE = 'ru-Ru'
 
 TIME_ZONE = 'Europe/Moscow'
@@ -100,31 +102,29 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = '/static_backend/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_backend')
+STATIC_URL = '/backend_static/'
+STATIC_ROOT = BASE_DIR / 'backend_static'
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-STATICFILES_DIRS = [
-    '/media',
-]
-
+MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'users.User'
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
-        'user': 'api.v1.users.serializers.CustomUserSerializer',
-        'current_user': 'api.v1.users.serializers.CustomUserSerializer',
-        'user_create': 'api.v1.users.serializers.CustomUserCreateSerializer',
+        'user': 'api.v1.users.serializers.UserSerializer',
+        'current_user': 'api.v1.users.serializers.UserSerializer',
+        'user_create': 'api.v1.users.serializers.UserCreateSerializer',
     },
     'PERMISSIONS': {
         'token_create': ['rest_framework.permissions.AllowAny'],
@@ -144,22 +144,7 @@ DJOSER = {
     'HIDE_USERS': False,
 }
 
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-        'rest_framework.filters.SearchFilter',
-    ],
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 6,
-}
+
 
 if DEBUG:
     SWAGGER_SETTINGS = {
