@@ -4,7 +4,7 @@ from api.v1.recipe.serializers import RecipeSerializer
 from recipes.models import ShoppingCart
 
 
-class ShoppingCartCartSerializer(RecipeSerializer):
+class ShoppingCartSerializer(RecipeSerializer):
     """Сериализатор добавления рецепта в корзину"""
 
     class Meta(RecipeSerializer.Meta):
