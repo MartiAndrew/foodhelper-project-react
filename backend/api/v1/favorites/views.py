@@ -1,21 +1,35 @@
-from rest_framework import generics, status
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from ..recipe.mixins import GetObjectMixin
+
+from users.models import User
+from recipes.models import Recipe, Favorites
+from .serializers import FavoritesSerializer
 
 
-
-class FavoriteCreateDel(GetObjectMixin,
-                        generics.RetrieveDestroyAPIView,
-                        generics.ListCreateAPIView):
+class FaviritesView(APIView):
     """Класс представления для избранных рецептов,
     добавление и удаление"""
 
-    def create(self, request, *args, **kwargs):
-        instance = self.get_object()
-        request.user.favorite_recipe.recipe.add(instance)
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    @action(detail=True, methods=['post', 'delete'],
+            permission_classes=[IsAuthenticated])
+    def favorite(self, request, **kwargs):
+        user = get_object_or_404(User, username=request.user)
+        recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
 
-    def perform_destroy(self, instance):
-        self.request.user.favorite_recipe.recipe.remove(instance)
+        if request.method == 'POST':
+            serializer = FavoritesSerializer(
+                recipe, data=request.data, context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            Favorites.objects.create(user=user, recipe=recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        favorite_recipe = get_object_or_404(
+            Favorites, user=user, recipe=recipe
+        )
+        favorite_recipe.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,94 +1,48 @@
-from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import generics, status, viewsets
-from django.db.models.expressions import Exists, OuterRef, Value
-from django.contrib.auth import get_user_model
-from djoser.views import UserViewSet
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from users.models import CustomUser, Subscribe
+from rest_framework.response import Response
+from djoser.views import UserViewSet
 
-from .serializers import (CustomUserCreateSerializer,
-                          SubscribeSerializer, CustomUserSerializer)
-
-User = get_user_model()
+from api.v1.users.serializers import SubscribeSerializer
+from users.models import Subscribe, User
+from api.pagination import Pagination
 
 
 class CustomUserViewSet(UserViewSet):
     """Класс представления для пользователя и его подписок."""
-    serializer_class = CustomUserSerializer
-    permission_classes = (IsAuthenticated,)
+    pagination_class = Pagination
 
     def get_queryset(self):
-        """В этом методе аннотируется каждый объект пользователя (User)
-        значением is_subscribed, которое указывает, подписан ли текущий
-        аутентифицированный пользователь на данного пользователя.
-        Подзапрос (Exists) проверяет, существуют ли связи follower между
-        текущим пользователем (self.request.user) и объектом пользователя,
-        ссылающегося на текущего пользователя (author=OuterRef('id')"""
-        queryset = CustomUser.objects.all()
-        if self.request.user.is_authenticated:
-            queryset = queryset.annotate(
-                is_subscribed=Exists(
-                    self.request.user.follower.filter(author=OuterRef('id'))
-                )
-            ).prefetch_related('follower', 'following')
-        else:
-            queryset = queryset.annotate(is_subscribed=Value(False))
-        return queryset
+        return User.objects.all()
 
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return CustomUserCreateSerializer
-        return CustomUserSerializer
+    @action(detail=True, methods=['post', 'delete'],
+            permission_classes=[IsAuthenticated])
+    def subscribe(self, request, **kwargs):
+        user = get_object_or_404(User, username=request.user)
+        author = get_object_or_404(User, id=self.kwargs.get('id'))
 
-    @action(
-        detail=False,
-        methods=['GET'],
-        permission_classes=(IsAuthenticated,))
+        if request.method == 'POST':
+            serializer = SubscribeSerializer(
+                author, data=request.data, context={'request': request}
+            )
+            serializer.is_valid(raise_exception=True)
+            Subscribe.objects.create(user=user, author=author)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        subscription = get_object_or_404(
+            Subscribe, user=user, author=author
+        )
+        subscription.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
-        """Метод получения подписки пользователя."""
-        subscribe = Subscribe.objects.filter(user=request.user)
-        pages = self.paginate_queryset(subscribe)
+        user = request.user
+        queryset = User.objects.filter(subscribe__user=user)
+        pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
             pages, many=True, context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
-
-
-class SubscribeCreateDel(
-        generics.RetrieveDestroyAPIView,
-        generics.ListCreateAPIView):
-    """Класс представления для подписки и отписки от пользователя."""
-
-    serializer_class = SubscribeSerializer
-
-    def get_queryset(self):
-        return self.request.user.follower.select_related(
-            'following'
-        ).prefetch_related(
-            'following__recipe'
-        ).annotate(
-            recipes_count=Count('following__recipe'),
-            is_subscribed=Value(True), )
-
-    def get_object(self):
-        user_id = self.kwargs['user_id']
-        user = get_object_or_404(User, id=user_id)
-        self.check_object_permissions(self.request, user)
-        return user
-
-    def create(self, request, *args, **kwargs):
-        user_id = self.kwargs['user_id']
-        instance = get_object_or_404(User, id=user_id)
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        subs = serializer.save(author=instance, user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_destroy(self, instance):
-        self.request.user.follower.filter(author=instance).delete()
-
