@@ -6,13 +6,14 @@ from recipes.models import Recipe
 from users.permissions import IsAuthorOrReadOnly
 from api.filters import RecipeFilter
 from api.pagination import Pagination
-from api.v1.favorites.views import FaviritesView
+
+from api.v1.favorites.views import FavoritesView
 from api.v1.recipe.serializers import RecipeSerializer, RecipeCreateSerializer
 from api.v1.shopping_cart.views import ShoppingCartView
 
 
 class RecipeViewSet(ShoppingCartView,
-                    FaviritesView,
+                    FavoritesView,
                     viewsets.ModelViewSet):
     """Класс представления для рецепта."""
     queryset = Recipe.objects.all()

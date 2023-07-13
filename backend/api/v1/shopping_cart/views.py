@@ -16,11 +16,13 @@ from recipes.models import RecipeIngredient, ShoppingCart, Recipe
 
 
 class ShoppingCartView(APIView):
-    """Класс представления для скачивания корзины покупок"""
+    """Класс представления для создания, удаления и
+    скачивания корзины покупок"""
 
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, **kwargs):
+        """Метод для создания им удаления списка покупок."""
         user = get_object_or_404(User, username=request.user)
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
 
@@ -39,6 +41,7 @@ class ShoppingCartView(APIView):
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
+        """Метод для скачивания списка покупок."""
         user = request.user
         if not user.shopping_cart.exists():
             return Response(status=status.HTTP_400_BAD_REQUEST)

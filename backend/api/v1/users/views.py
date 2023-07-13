@@ -20,6 +20,7 @@ class CustomUserViewSet(UserViewSet):
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
     def subscribe(self, request, **kwargs):
+        """Метод для создания и удаления подписок."""
         user = get_object_or_404(User, username=request.user)
         author = get_object_or_404(User, id=self.kwargs.get('id'))
 
@@ -39,8 +40,9 @@ class CustomUserViewSet(UserViewSet):
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
+        """Метод для вывода подписок."""
         user = request.user
-        queryset = User.objects.filter(subscribe__user=user)
+        queryset = User.objects.filter(follower__user=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
             pages, many=True, context={'request': request}
