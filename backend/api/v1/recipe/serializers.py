@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from drf_extra_fields.fields import Base64ImageField
 
-from recipes.models import Recipe, RecipeIngredient, Tag, Ingredient
+from recipes.models import Recipe, RecipeIngredient, Tag
 from ..tags.serializers import TagSerializer
 from ..users.serializers import CustomUserSerializer
 
@@ -21,6 +21,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор описывающий поля рецепта для чтения."""
     author = CustomUserSerializer()
     ingredients = RecipeIngredientSerializer(many=True,
                                              source='recipeingredients')
