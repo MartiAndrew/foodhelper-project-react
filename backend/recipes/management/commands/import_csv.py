@@ -13,6 +13,8 @@ CSV_FILE_PATH = BASE_DIR / 'data'
 
 
 class Command(BaseCommand):
+    """Команда для импортирования тэгов и ингридиентов
+    в базу данных из csv файла."""
 
     def handle(self, *args, **kwargs):
         for model, csv_f in TABLES.items():
