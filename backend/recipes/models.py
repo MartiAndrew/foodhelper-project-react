@@ -156,13 +156,13 @@ class Favorites(models.Model):
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
         ordering = ['-id']
-        onstraints = [
+        constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
                 name='unique_favorite')]
 
     def __str__(self):
-        return f'Пользователь: {self.user}, Рецепт: {self.recipe}'
+        return f'{self.user}, {self.recipe.name}'
 
 
 
