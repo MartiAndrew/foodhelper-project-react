@@ -5,14 +5,16 @@ from rest_framework.filters import SearchFilter
 
 
 class IngredientSearchFilter(SearchFilter):
+    """Класс для поиска ингридиентов по имени"""
     search_param = 'name'
 
 
 class RecipeFilter(filters.FilterSet):
+    """Класс"""
     tags = filters.ModelMultipleChoiceFilter(
+        queryset=Tag.objects.all(),
         field_name='tags__slug',
         to_field_name='slug',
-        queryset=Tag.objects.all(),
     )
     author = filters.ModelChoiceFilter(queryset=User.objects.all())
 
