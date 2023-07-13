@@ -3,6 +3,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,19 +20,18 @@ PROJECT_APPS = [
     'api.apps.ApiConfig',
 ]
 
-INSTALLED_APPS = [
-                     'django.contrib.admin',
-                     'django.contrib.auth',
-                     'django.contrib.contenttypes',
-                     'django.contrib.sessions',
-                     'django.contrib.messages',
-                     'django.contrib.staticfiles',
-                     'rest_framework',
-                     'rest_framework.authtoken',
-                     'djoser',
-                     'drf_yasg',
-                     'django_filters',
-                 ] + PROJECT_APPS
+INSTALLED_APPS = ['django.contrib.admin',
+                  'django.contrib.auth',
+                  'django.contrib.contenttypes',
+                  'django.contrib.sessions',
+                  'django.contrib.messages',
+                  'django.contrib.staticfiles',
+                  'rest_framework',
+                  'rest_framework.authtoken',
+                  'djoser',
+                  'drf_yasg',
+                  'django_filters',
+                  ] + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -143,8 +143,6 @@ DJOSER = {
     },
     'HIDE_USERS': False,
 }
-
-
 
 if DEBUG:
     SWAGGER_SETTINGS = {

@@ -1,14 +1,14 @@
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from drf_extra_fields.fields import Base64ImageField
-
 from recipes.models import Recipe, RecipeIngredient, Tag
-from ..tags.serializers import TagSerializer
-from ..users.serializers import CustomUserSerializer
+
+from api.v1.tags.serializers import TagSerializer
+from api.v1.users.serializers import CustomUserSerializer
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    """Сериализатор для связанной модели AmountRecipe."""
+    """Сериализатор для связанной модели RecipeIngredient."""
     id = serializers.IntegerField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(

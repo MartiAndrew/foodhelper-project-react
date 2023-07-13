@@ -1,8 +1,10 @@
 from rest_framework import viewsets
 
-from .serializers import TagSerializer
 from recipes.models import Tag
+
 from users.permissions import IsAdminOrReadOnly
+
+from .serializers import TagSerializer
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -11,4 +13,3 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = None
-

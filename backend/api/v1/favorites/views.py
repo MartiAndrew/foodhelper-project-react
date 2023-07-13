@@ -11,6 +11,8 @@ from users.models import User
 
 
 class FavoritesView(APIView, FavoriteShoppingMixin):
+    """Класс представления для создания и удаления
+    избранных рецептов"""
     permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['post', 'delete'])

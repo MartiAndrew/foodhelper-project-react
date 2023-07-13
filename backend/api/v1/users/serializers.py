@@ -1,8 +1,9 @@
-from rest_framework import serializers, status
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from rest_framework import serializers, status
 
 from recipes.models import Recipe
-from users.models import User, Subscribe
+
+from users.models import Subscribe, User
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -12,7 +13,6 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         model = User
         fields = ('email', 'id', 'username',
                   'first_name', 'last_name', 'password')
-
 
 
 class CustomUserSerializer(UserSerializer):
@@ -28,7 +28,6 @@ class CustomUserSerializer(UserSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         return user.follower.filter(author=obj).exists()
-
 
 
 class SubscriptionsRecipeSerializer(serializers.ModelSerializer):
@@ -73,7 +72,7 @@ class SubscribeSerializer(UserSerializer):
         if recipes_limit:
             recipes = recipes[: int(recipes_limit)]
         serializer = SubscriptionsRecipeSerializer(recipes,
-                                             many=True, read_only=True)
+                                                   many=True, read_only=True)
         return serializer.data
 
     def validate(self, data):

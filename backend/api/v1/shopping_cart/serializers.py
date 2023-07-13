@@ -1,7 +1,8 @@
 from rest_framework import serializers, status
 
-from api.v1.recipe.serializers import RecipeSerializer
 from recipes.models import ShoppingCart
+
+from api.v1.recipe.serializers import RecipeSerializer
 
 
 class ShoppingCartSerializer(RecipeSerializer):
@@ -14,9 +15,10 @@ class ShoppingCartSerializer(RecipeSerializer):
     def validate(self, data):
         recipe = self.instance
         user = self.context.get('request').user
-        if ShoppingCart.objects.filter(recipe=recipe, user=user).exists():
+        if ShoppingCart.objects.select_related('recipe', 'user').filter(
+                recipe=recipe, user=user).exists():
             raise serializers.ValidationError(
-                detail='Рецепт уже в корзине',
+                detail='Рецепт уже есть в корзине',
                 code=status.HTTP_400_BAD_REQUEST,
             )
         return data

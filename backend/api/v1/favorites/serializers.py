@@ -1,8 +1,8 @@
 from rest_framework import serializers, status
 
-from api.v1.recipe.serializers import RecipeSerializer
 from recipes.models import Favorites, Recipe
 
+from api.v1.recipe.serializers import RecipeSerializer
 
 
 class FavoritesSerializer(RecipeSerializer):
@@ -15,7 +15,8 @@ class FavoritesSerializer(RecipeSerializer):
     def validate(self, data):
         recipe = self.instance
         user = self.context.get('request').user
-        if Favorites.objects.filter(recipe=recipe, user=user).exists():
+        if Favorites.objects.select_related('recipe', 'user').filter(
+                recipe=recipe, user=user).exists():
             raise serializers.ValidationError(
                 detail='Рецепт уже в избранных',
                 code=status.HTTP_400_BAD_REQUEST,

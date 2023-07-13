@@ -11,7 +11,7 @@ from recipes.models import Recipe, RecipeIngredient, ShoppingCart
 
 from users.models import User
 
-from ...mixins import FavoriteShoppingMixin
+from api.mixins import FavoriteShoppingMixin
 from .pdf_generate import pdf_generate
 from .serializers import ShoppingCartSerializer
 

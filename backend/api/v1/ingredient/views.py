@@ -1,9 +1,11 @@
 from rest_framework import viewsets
 
-from .serializers import IngredientSerializer
 from recipes.models import Ingredient
+
+from api.filters import IngredientSearchFilter
 from users.permissions import IsAdminOrReadOnly
-from ...filters import IngredientSearchFilter
+
+from .serializers import IngredientSerializer
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

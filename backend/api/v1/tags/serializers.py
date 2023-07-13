@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from .fields import Hex2NameColor
 from recipes.models import Tag
+
+from .fields import Hex2NameColor
 
 
 class TagSerializer(serializers.ModelSerializer):
