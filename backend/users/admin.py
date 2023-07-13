@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from .models import User, Subscribe
+# Local Imports
+from .models import Subscribe, User
+
 
 EMPTY_MESSAGE = '-пусто-'
 
@@ -9,7 +11,8 @@ class UserAdmin(admin.ModelAdmin):
     """
     Представление модели пользователя в интерфейсе администратора
     """
-    list_display = ("id", "username", "email", "first_name", "last_name", "password")
+    list_display = ("id", "username", "email",
+                    "first_name", "last_name", "password")
     list_filter = ("username", "email")
     empty_value_display = EMPTY_MESSAGE
 

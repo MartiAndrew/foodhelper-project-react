@@ -1,6 +1,5 @@
-from rest_framework import serializers
-
 import webcolors
+from rest_framework import serializers
 
 
 class Hex2NameColor(serializers.Field):
