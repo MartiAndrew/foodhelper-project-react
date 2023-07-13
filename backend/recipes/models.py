@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 User = get_user_model()
 
@@ -165,8 +163,6 @@ class Favorites(models.Model):
         return f'{self.user}, {self.recipe.name}'
 
 
-
-
 class ShoppingCart(models.Model):
     """
     Класс описывающий модель корзины покупок рецептов пользователя.
@@ -195,5 +191,3 @@ class ShoppingCart(models.Model):
 
     def __str__(self):
         return f'{self.user}, {self.recipe.name}'
-
-
