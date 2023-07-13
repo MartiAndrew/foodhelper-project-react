@@ -21,6 +21,7 @@ class FavoritesView(APIView, FavoriteShoppingMixin):
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
 
         if request.method == 'POST':
-            return self.perform_action(user, recipe, FavoritesSerializer, Favorites, request)
+            return self.perform_action(
+                user, recipe, FavoritesSerializer, Favorites, request)
         elif request.method == 'DELETE':
             return self.delete_action(user, recipe, Favorites)
