@@ -21,7 +21,7 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class RecipeIngredientInline(admin.TabularInline):
-    """Представляет модель AmountRecipe в интерфейсе администратора."""
+    """Представляет модель RecipeIngredient в интерфейсе администратора."""
     model = RecipeIngredient
 
 
