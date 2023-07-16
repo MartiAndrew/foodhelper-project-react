@@ -4,13 +4,11 @@ from django.core.management import BaseCommand
 from django.db import DatabaseError, IntegrityError
 
 from foodhelper.settings import BASE_DIR
-
 from recipes.models import Ingredient, Tag
 
 
 class ImportDataError(Exception):
     """Исключение, возникающее при ошибке импорта данных"""
-    pass
 
 
 TABLES = {
@@ -29,11 +27,14 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         for model, csv_f in TABLES.items():
             try:
+                objects = []
                 with open(
                         CSV_FILE_PATH / csv_f, encoding='utf-8'
                 ) as csv_file:
                     for record in csv.DictReader(csv_file):
-                        model.objects.get_or_create(**record)
+                        obj = model(**record)
+                        objects.append(obj)
+                model.objects.bulk_create(objects)
             except FileNotFoundError:
                 raise ImportDataError(f'Файл {csv_f} не найден')
             except csv.Error:

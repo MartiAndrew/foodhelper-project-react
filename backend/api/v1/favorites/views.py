@@ -3,10 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from recipes.models import Favorites, Recipe
-
 from api.mixins import FavoriteShoppingMixin
 from api.v1.favorites.serializers import FavoritesSerializer
+from recipes.models import Favorites, Recipe
 from users.models import User
 
 

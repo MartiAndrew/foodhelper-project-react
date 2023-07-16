@@ -2,13 +2,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
 
-from recipes.models import Recipe
-
 from api.filters import RecipeFilter
 from api.pagination import Pagination
 from api.v1.favorites.views import FavoritesView
 from api.v1.recipe.serializers import RecipeCreateSerializer, RecipeSerializer
 from api.v1.shopping_cart.views import ShoppingCartView
+from recipes.models import Recipe
 from users.permissions import IsAuthorOrReadOnly
 
 

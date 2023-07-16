@@ -4,6 +4,8 @@ from django.db import models
 
 User = get_user_model()
 
+MIN_TIME = 1
+
 
 class Tag(models.Model):
     """Класс описывающий модель тэгов у рецепта"""
@@ -89,7 +91,7 @@ class Recipe(models.Model):
         'Время приготовления',
         validators=(
             MinValueValidator(
-                1, message='Минимальное время приготовления - 1 минута.'),
+                MIN_TIME, message=f'Минимальное время приготовления - {MIN_TIME} минута.'),
         )
     )
 
@@ -111,7 +113,7 @@ class RecipeIngredient(models.Model):
         default=1,
         validators=(
             MinValueValidator(
-                1, message='Мин. количество ингридиента 1'),),
+                MIN_TIME, message=f'Мин. количество ингредиента {MIN_TIME}'),),
         verbose_name='количество ингредиента'
     )
     recipe = models.ForeignKey(

@@ -1,8 +1,6 @@
 from django.contrib import admin
 
-# Local Imports
-from .models import Subscribe, User
-
+from users.models import Subscribe, User
 
 EMPTY_MESSAGE = '-пусто-'
 

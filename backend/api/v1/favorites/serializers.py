@@ -1,8 +1,7 @@
 from rest_framework import serializers, status
 
-from recipes.models import Favorites, Recipe
-
 from api.v1.recipe.serializers import RecipeSerializer
+from recipes.models import Favorites, Recipe
 
 
 class FavoritesSerializer(RecipeSerializer):

@@ -1,13 +1,7 @@
 from django.contrib import admin
 
-from .models import (
-    Favorites,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingCart,
-    Tag,
-)
+from .models import (Favorites, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingCart, Tag)
 
 EMPTY_MESSAGE = '-пусто-'
 
@@ -49,8 +43,6 @@ class RecipeAdmin(admin.ModelAdmin):
             return obj.favorite_recipe.count()
         return 0
 
-    favorite_count.short_description = 'Избранное'
-
     def list_ingredients(self, obj):
         if obj.ingredients.exists():
             return ', '.join(
@@ -58,6 +50,7 @@ class RecipeAdmin(admin.ModelAdmin):
             )
         return 0
 
+    favorite_count.short_description = 'Избранное'
     list_ingredients.short_description = 'Ингредиенты'
 
 

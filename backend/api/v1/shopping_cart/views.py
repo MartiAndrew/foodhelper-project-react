@@ -7,13 +7,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.mixins import FavoriteShoppingMixin
 from recipes.models import Recipe, RecipeIngredient, ShoppingCart
-
 from users.models import User
 
-from api.mixins import FavoriteShoppingMixin
-from .pdf_generate import pdf_generate
-from .serializers import ShoppingCartSerializer
+from api.v1.shopping_cart.pdf_generate import pdf_generate
+from api.v1.shopping_cart.serializers import ShoppingCartSerializer
 
 
 class ShoppingCartView(APIView, FavoriteShoppingMixin):
