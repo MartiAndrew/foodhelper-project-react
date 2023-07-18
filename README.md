@@ -58,15 +58,8 @@ git clone git@github.com:nucluster/foodgram-project-react.git
 cd infra
 ```
 
-*Создайте .env файл следущего содержания:*
-```
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=postgres
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-DB_HOST=db
-DB_PORT=5432
-``` 
+*Создайте .env файл в директории infra. Его содержание в файле env.example, который находится в корне проекта.*
+
 Все последующие команды выполняются с правами суперпользователя  
 
 *Выполните команду:*
