@@ -1,0 +1,47 @@
+version: '3.3'
+services:
+
+  frontend:
+    image: martiandrew/foodhelper_frontend:latest
+    container_name: foodhelper-frontend
+    volumes:
+      - ../frontend/:/app/result_build/
+
+  db:
+    image: postgres:15.2-alpine3.17
+    container_name: foodhelper-db
+    volumes:
+      - foodhelper_db_volume:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+
+  backend:
+    image: martiandrew/foodhelper_backend:latest
+    container_name: foodhelper-backend
+    restart: always
+    volumes:
+      - foodhelper_static_volume:/app/backend_static/
+      - foodhelper_media_volume:/app/media/
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
+  nginx:
+    image: nginx:1.24.0-alpine3.17-slim
+    container_name: foodhelper-nginx
+    ports:
+      - "${NGINX_PORT}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
+      - foodhelper_static_volume:/var/html/backend_static/
+      - foodhelper_media_volume:/var/html/media/
+    depends_on:
+      - backend
+
+volumes:
+  foodhelper_static_volume:
+  foodhelper_media_volume:
+  foodhelper_db_volume:
