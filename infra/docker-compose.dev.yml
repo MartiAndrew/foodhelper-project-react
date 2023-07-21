@@ -2,13 +2,15 @@ version: '3.3'
 services:
 
   frontend:
-    image: martiandrew/foodhelper_frontend:latest
-    container_name: foodhelper-frontend
+    build:
+      context: ../frontend
+      dockerfile: frontend/Dockerfile
+    container_name: foodghelper-frontend
     volumes:
       - ../frontend/:/app/result_build/
 
   db:
-    image: postgres:15.2-alpine3.17
+    image: postgres:13
     container_name: foodhelper-db
     volumes:
       - foodhelper_db_volume:/var/lib/postgresql/data/
@@ -16,9 +18,20 @@ services:
       - .env
 
   backend:
-    image: martiandrew/foodhelper_backend:latest
+    build:
+      context: ../backend
+      dockerfile: backend/Dockerfile
     container_name: foodhelper-backend
     restart: always
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python manage.py makemigrations
+        python manage.py migrate
+        python manage.py import_csv
+        python manage.py collectstatic --noinput
+        gunicorn --bind 0:8000 foodhelper.wsgi
     volumes:
       - foodhelper_static_volume:/app/backend_static/
       - foodhelper_media_volume:/app/media/
@@ -30,6 +43,8 @@ services:
   nginx:
     image: nginx:1.24.0-alpine3.17-slim
     container_name: foodhelper-nginx
+    env_file:
+      - .env
     ports:
       - "${NGINX_PORT}:80"
     volumes:

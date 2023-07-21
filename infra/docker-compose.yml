@@ -1,56 +1,38 @@
 version: '3.3'
 services:
-
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: frontend/Dockerfile
-    container_name: foodghelper-frontend
-    volumes:
-      - ../frontend/:/app/result_build/
-
   db:
-    image: postgres:13
-    container_name: foodhelper-db
+    image: postgres:13.4
     volumes:
       - foodhelper_db_volume:/var/lib/postgresql/data/
     env_file:
-      - .env
+      - ./.env
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: backend/Dockerfile
-    container_name: foodhelper-backend
+    image: martiandrew/foodhelper_backend
     restart: always
-    command:
-      - /bin/bash
-      - -c
-      - |
-        python manage.py makemigrations
-        python manage.py migrate
-        python manage.py import_csv
-        python manage.py collectstatic --noinput
-        gunicorn --bind 0:8000 foodhelper.wsgi
     volumes:
       - foodhelper_static_volume:/app/backend_static/
       - foodhelper_media_volume:/app/media/
     depends_on:
       - db
     env_file:
-      - .env
+      - ./.env
+
+  frontend:
+    image: martiandrew/foodhelper_frontend
+    volumes:
+      - ../frontend/:/app/result_build/
+    depends_on:
+      - db
 
   nginx:
-    image: nginx:1.24.0-alpine3.17-slim
-    container_name: foodhelper-nginx
-    env_file:
-      - .env
+    image: nginx:1.19.3
     ports:
-      - "${NGINX_PORT}:80"
+      - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/:/usr/share/nginx/html/api/docs/
+      - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
       - foodhelper_static_volume:/var/html/backend_static/
       - foodhelper_media_volume:/var/html/media/
     depends_on:
