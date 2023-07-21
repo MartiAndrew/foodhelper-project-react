@@ -5,7 +5,7 @@ services:
     volumes:
       - foodhelper_db_volume:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - ../.env
 
   backend:
     image: martiandrew/foodhelper_backend
@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
     env_file:
-      - ./.env
+      - ../.env
 
   frontend:
     image: martiandrew/foodhelper_frontend
