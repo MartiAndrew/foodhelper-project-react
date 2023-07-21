@@ -42,7 +42,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodhelper_frontend
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodhelper-backend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodhelper_backend
             sudo docker-compose stop
             sudo docker-compose rm backend
             sudo docker-compose up -d
