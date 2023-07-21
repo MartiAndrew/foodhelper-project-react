@@ -2,6 +2,7 @@ version: '3.3'
 services:
   db:
     image: postgres:13.4
+    container_name: foodhelper-db
     volumes:
       - foodhelper_db_volume:/var/lib/postgresql/data/
     env_file:
