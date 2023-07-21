@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django')
 
 DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default='localhost 127.0.0.1').split()
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default='localhost 127.0.0.1').split(',')
 
 PROJECT_APPS = [
     'users.apps.UsersConfig',
