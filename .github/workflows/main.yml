@@ -56,6 +56,7 @@ jobs:
             sudo docker-compose exec backend python manage.py makemigrations
             sudo docker-compose exec backend python manage.py migrate --noinput
             sudo docker-compose exec backend python manage.py collectstatic --no-input
+            sudo docker-compose exec backend python manage.py import_csv
 
   telegram_message:
     name: Send telegram message
