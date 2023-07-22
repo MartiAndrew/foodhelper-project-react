@@ -13,7 +13,7 @@ from foodhelper.settings import MEDIA_ROOT
 
 def pdf_generate(text, response):
     """Функция создания и настройки PDF-страницы"""
-    reportlab.rl_config.TTFSearchPath.append(str(MEDIA_ROOT) + '/fonts')
+    reportlab.rl_config.TTFSearchPath.append("~/foodhelper/infra/media/fonts")
     pdfmetrics.registerFont(TTFont('OpenSans', 'opensans.ttf'))
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(
