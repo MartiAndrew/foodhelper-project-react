@@ -55,8 +55,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd ~/foodhelper/infra
-            docker-compose down -v
-            sudo docker system prune -a --force
+            docker-compose down
             docker pull ${{ secrets.DOCKER_USERNAME }}/foodhelper_backend:latest
             docker pull ${{ secrets.DOCKER_USERNAME }}/foodhelper_frontend:latest
             docker-compose -f docker-compose.yml up -d
