@@ -2,7 +2,7 @@ name: Foodhepler build-deploy workflow
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build_and_push_to_docker_hub:
