@@ -55,9 +55,9 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd ~/foodhelper/infra
-            docker-compose down
+            docker-compose down 
+            docker image rm ${{ secrets.DOCKER_USERNAME }}/foodhelper_backend:latest
             docker pull ${{ secrets.DOCKER_USERNAME }}/foodhelper_backend:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/foodhelper_frontend:latest
             docker-compose -f docker-compose.yml up -d
             sudo docker-compose exec backend python manage.py makemigrations
             sudo docker-compose exec backend python manage.py migrate --noinput
