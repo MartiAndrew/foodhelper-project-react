@@ -5,4 +5,5 @@ COPY ./requirements.txt .
 RUN pip3 install -r requirements.txt --no-cache-dir
 RUN apt-get update && apt-get install -y make
 COPY . .
+COPY data/fonts /app/media/fonts
 CMD ["make", "run_gunicorn"]

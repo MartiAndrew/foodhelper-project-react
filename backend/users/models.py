@@ -55,15 +55,15 @@ class Subscribe(models.Model):
         verbose_name_plural = 'Подписки'
         unique_together = ('user', 'author')
 
-        constraints = (
+        constraints = [
             models.UniqueConstraint(
-                fields=('user', 'author',),
+                fields=['author', 'user'],
                 name='unique_subscribe'),
             models.CheckConstraint(
                 check=~models.Q(user=models.F('author')),
                 name='prevent_self_subscribe',
             )
-        )
+        ]
 
     def __str__(self):
-        return f'Подписчик {self.user} на {self.author}'
+        return f'Подписчик {self.user} подписан на {self.author}'

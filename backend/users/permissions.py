@@ -17,7 +17,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
-    """Класс разрешения для автора и чтения"""
+    """Класс разрешения для автора или чтения"""
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
                 or request.user.is_authenticated)

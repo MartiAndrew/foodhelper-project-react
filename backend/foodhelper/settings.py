@@ -3,7 +3,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+env_path = Path(__file__).resolve().parent.parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,7 +12,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django')
 
 DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
 
-ALLOWED_HOSTS = ['127.0.0.1', '158.160.30.247', 'localhost', 'foodhelper.ddns.net']
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default='localhost 127.0.0.1').split(',')
 
 PROJECT_APPS = [
     'users.apps.UsersConfig',

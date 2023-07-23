@@ -8,12 +8,12 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
-from foodhelper.settings import MEDIA_ROOT
+from foodhelper.settings import BASE_DIR
 
 
 def pdf_generate(text, response):
     """Функция создания и настройки PDF-страницы"""
-    reportlab.rl_config.TTFSearchPath.append("./fonts")
+    reportlab.rl_config.TTFSearchPath.append(str(BASE_DIR) + '/data/fonts')
     pdfmetrics.registerFont(TTFont('OpenSans', 'opensans.ttf'))
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(

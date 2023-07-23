@@ -42,7 +42,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         """Метод для вывода подписок."""
         user = request.user
-        queryset = User.objects.filter(follower__user=user)
+        queryset = User.objects.filter(following__user=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
             pages, many=True, context={'request': request}
