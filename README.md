@@ -35,62 +35,132 @@ Cайт Foodhelper («Помощник подбора продуктов»).
 ![CI](https://img.shields.io/badge/-Linux-red)
 
 ***
+## Схема API-проекта:
+ 
+[Схема API](docs/openapi-schema.yml) - Это схема API проекта.
 
-## Как запустить проект:
+***
+
+## Как запустить проект локально:
 
 Для запуска проекта на локальной машине у вас должен быть установлен Docker.
-*Устанавливаем Docker и Docker compose:*
+- *Устанавливаем Docker и Docker compose:*
 ```python
 sudo apt install docker.io
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 ```
-*Устанавливаем разрешение для docker compose*
+- *Устанавливаем разрешение для docker compose*
 ```python
 sudo chmod +x /usr/local/bin/docker-compose
 ```
-*Клонируйте репозиторий:*
+- *Клонируйте репозиторий:*
 ```
-git clone git@github.com:nucluster/foodgram-project-react.git
-```
-
-*Измените свою текущую рабочую директорию:*
-```
-cd infra
+git clone git@github.com:MartiAndrew/foodgram-project-react.git
 ```
 
-*Создайте .env файл в директории infra. Его содержание в файле env.example, который находится в корне проекта.*
+- *Создайте .env файл в корне проекта. Его содержание в файле env.example, который находится в корне проекта.*
 
 Все последующие команды выполняются с правами суперпользователя  
 
-*Выполните команду:*
+- *Выполните команду:*
 ```
 docker compose up -d --build
 ```
 
-*Соберите статику:*
+- *Соберите статику:*
 ```
 docker compose exec backend python manage.py collectstatic --no-input
 ```
-*Создайте файлы миграций:*
+- *Создайте файлы миграций:*
 ```
 docker compose exec backend python manage.py makemigrations 
 ```
 
-*Примените миграции:*
+- *Примените миграции:*
 ```
 docker compose exec backend python manage.py migrate
 ```
 
-*Создайте суперпользователя Django:*
+- *Создайте суперпользователя Django:*
 ```
 docker compose exec backend python manage.py createsuperuser
 ```
 
-*Для загрузки данных из csv файлов:*
+- *Для загрузки данных из csv файлов:*
 ```
 docker compose exec backend python manage.py import_csv
 ```
 
 ***
+## Как запустить проект на сервере:
 
+- *Клонируйте репозиторий:*
+```
+git clone git@github.com:MartiAndrew/foodgram-project-react.git
+```
+
+- *Соединяемся с сервером:*
+```makefile
+ssh -i ~/.ssh/<путь до вашего закрытого ключа> <имя пользователя на сервере>@<ip-сервера>
+```
+- *Устанавливаем Docker и Docker compose:*
+```python
+sudo apt install docker.io
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
+- *Устанавливаем разрешение для docker compose*
+```python
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+- *Создаём домашнюю директорию проекта. Далее создаём .env файл в корне проекта. Его содержание в файле env.example, который находится в корне проекта.*
+```text
+mkdir foodhelper && cd foodhelper/
+touch .env
+```
+
+- *находясь на локальном компьютере в корневой директории скаченного проекта зайдите в папку infra и выполните команду копирования её содержимого*
+```text
+scp -i ~/.ssh/<путь до вашего закрытого ключа> . <имя пользователя на сервере>@<ip-сервера>:/home/yc-user/foodhelper/infra/
+```
+
+- *Заходим снова на сервер, как показано ранее. И выполняем команду запуска docker-compose:*
+```text
+cd foodhelper/infra/ && sudo docker-compose up -d
+```
+- *Соберите статику:*
+```
+docker compose exec backend python manage.py collectstatic --no-input
+```
+- *Создайте файлы миграций:*
+```
+docker compose exec backend python manage.py makemigrations 
+```
+
+- *Примените миграции:*
+```
+docker compose exec backend python manage.py migrate
+```
+
+- *Создайте суперпользователя Django:*
+```
+docker compose exec backend python manage.py createsuperuser
+```
+
+- *Для загрузки данных из csv файлов:*
+```
+docker compose exec backend python manage.py import_csv
+```
+
+Выше описанная процедура может быть автоматизирована и произведено развертывание и управление процессами CI/CD с помощью workflow main.yml.
+В конкретном случае запуск происходит автоматически при отправке проекта на сервер разработчика (git push).
+Предварительно на github action создаются секретные ключи(DOCKER_PASSWORD, DOCKER_USERNAME, (HOST, SSH_KEY, SSH_PASSPHRASE, USER) - данные для аутентификации на виртуальной машине)
+
+***
+## Пример главной страницы работающего проекта
+
+
+
+
+***
 **Над проектом работал:** [Мишков Андрей](https://github.com/MartiAndrew)
